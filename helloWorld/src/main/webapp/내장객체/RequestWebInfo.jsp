@@ -18,6 +18,13 @@
         <li>서버 포트 : <%= request.getServerPort() %></li>
         <li>클라이언트 IP 주소 : <%= request.getRemoteAddr() %></li>
         <li>쿼리스트링 : <%= request.getQueryString() %></li>
+        
+        <!-- 
+        	<input type=text name=id value=123>
+        	?id=123
+        	request.getParameter("id"); // 123 반환
+        	value속성값 = request.getParameter("name속성값")
+        -->
         <li>전송된 값 1 : <%= request.getParameter("eng") %></li>
         <li>전송된 값 2 : <%= request.getParameter("han") %></li>
     </ul>
