@@ -14,7 +14,12 @@
 	
 	if("abc".equals(id) && "123".equals(pw)){
 		// 로그인 성공
-		response.sendRedirect("gogreen.jsp?name="+id);
+		
+		// 세션에 저장
+		session.setAttribute("id", id);
+		
+		// response.sendRedirect("gogreen.jsp?name="+id);
+		response.sendRedirect("gogreen.jsp");
 	}else{
 		// 로그인 실패
 		response.sendRedirect("gogreen.jsp?loginErr=y");

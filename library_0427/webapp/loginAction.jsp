@@ -23,10 +23,14 @@
 	//out.print("member : " + member);
 	if(member != null){
 		//response.sendRedirect("login.jsp?name=" + member.getId());
+		session.setAttribute("member", member);
+		
 		if(member.getId().equals("admin")){
+
 			// 관리자 페이지 호출
 			response.sendRedirect("loginAdmin.jsp");
 		}else{
+
 			// 사용자 페이지 호출
 			response.sendRedirect("loginMember.jsp");
 		}

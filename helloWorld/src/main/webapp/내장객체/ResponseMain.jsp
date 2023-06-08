@@ -12,7 +12,7 @@
    	%>
     <form action="./ResponseLogin.jsp" method="post">
     	<!-- 유효성 검사(validation check) : 사용자의 입력값이 유효한지 체크 -->
-        아이디 : <input type="text" name="user_id" required="required"/><br />
+        아이디 : <input type="text" name="user_id" required="required" value="<%=request.getParameter("user_id")%>"/><br />
         패스워드 : <input type="text" name="user_pwd" required="required"/><br />
         <input type="submit" value="로그인" />
     </form>

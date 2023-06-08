@@ -1,3 +1,4 @@
+<%@page import="com.library.vo.Member"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -14,7 +15,10 @@
 		out.print("<script>alert('아이디/비밀번호를 확인해주세요.')</script>");
 	}
 	
-	String name = request.getParameter("name");
+	String name = "";
+	if(session.getAttribute("member") != null){
+ 		name = ((Member)session.getAttribute("member")).getName();
+	}
 	if(name != null && !name.equals("")){
 		out.print(name + "님 환영합니다.");
 	} else {
