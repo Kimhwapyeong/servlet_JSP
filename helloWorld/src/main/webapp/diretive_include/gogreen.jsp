@@ -1,3 +1,4 @@
+<%@page import="utils.CookieManager"%>
 <%@page import="javax.websocket.SendResult"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -35,6 +36,10 @@
                 					abc님 환영합니다. 출력
                 	-->
 					<%
+						// 쿠키에 저장된 아이디가 있다면 아이디를 텍스트필드에 value값으로 입력
+						String userId = CookieManager.readCookie(request, "userId");
+					%>
+					<%
                     	// 로그인 실패시 메시지 처리
 	                   	String loginErr = request.getParameter("loginErr");
                     	if("y".equals(loginErr)){
@@ -63,15 +68,18 @@
 						<div class='loginbox'>
 							<div id='login'>
 								<input type="text" name="userid" id="userpw"
-									placeholder='ID를 입력해주세요.'> <input type="password"
+									placeholder='ID를 입력해주세요.' value="<%=userId%>"> <input type="password"
 									name="userpw" id="userpw" placeholder='PW를 입력해주세요.'>
 							</div>
 							<div id='button'>
 								<input type="submit" value="로그인">
 							</div>
 						</div>
-						<div id='info'>
+						<div id='info' style='font-size:14px'>
 							<a href="">회원가입</a> <a href="">ID찾기</a> <a href="">PW찾기</a>
+							<!-- 선택되었을 때만 서버에 넘어갑니다!!
+								선택 안하고 값을 출력해보면 null이 출력됩니다. -->
+							<input type="checkbox" name="saveYN" value="Y" <%=userId.equals("")?"" : "checked" %>>아이디저장
 						</div>
 					</form>
 					<% }%>

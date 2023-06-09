@@ -1,5 +1,4 @@
-<%@page import="com.utils.test"%>
-<%@page import="com.library.vo.Member"%>
+<%@page import="utils.CookieManager"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -7,35 +6,47 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-	<link rel="stylesheet" href="css/gogreen_style.css">
 </head>
 <body>
 <%
-String userId = test.readCookie(request, "userId");
-
+	// 쿠키에 저장된 아이디 보여주기
+	// 쿠키에 저장된 아이디가 있다면 id필드의 value 속성에 아이디 값을 넣어줍니다.
+	
+	String userId = CookieManager.readCookie(request, "userId");
+	
+	/*
+	Cookie[] cookies = request.getCookies();
+	String userId = "";
+	
+	if(cookies != null){
+		for(Cookie cookie : cookies){
+			if(cookie.getName().equals("userId")){
+				userId = cookie.getValue();
+				break;
+			}
+		}		
+	}
+	*/
+	
 	String loginErr = request.getParameter("loginErr");
 	if("Y".equals(loginErr)){
 		out.print("<script>alert('아이디/비밀번호를 확인해주세요.')</script>");
 	}
 	
-	String name = "";
-	if(session.getAttribute("member") != null){
- 		name = ((Member)session.getAttribute("member")).getName();
-	}
+	String name = request.getParameter("name");
 	if(name != null && !name.equals("")){
 		out.print(name + "님 환영합니다.");
 	} else {
 %>
-<aside id='rightside'>
-<div class='loginbox'>
 	<!-- /// form : form 태그 안의 요소들을 가지고 서버에 페이지를 요청 -->
 	<form action="loginAction.jsp" method="post">
 		<div class='loginbox'>
 			<div id='login'>
 				<input type="text" name="userid" id="userid"
-					placeholder='ID를 입력해주세요.' value="<%=userId%>"> 
+					placeholder='ID를 입력해주세요.' required value="<%=userId%>"><br>
 				<input type="password"
-					name="userpw" id="userpw" placeholder='PW를 입력해주세요.'>
+					name="userpw" id="userpw" placeholder='PW를 입력해주세요.' required="required"><br>
+				<input type="checkbox" name="save_check" value="Y">아이디 저장하기<br>
 			</div>
 			<div id='button'>
 				<input type="submit" value="로그인">
@@ -43,11 +54,8 @@ String userId = test.readCookie(request, "userId");
 		</div>
 		<div id='info'>
 			<a href="">회원가입</a> <a href="">ID찾기</a> <a href="">PW찾기</a>
-			<input type="checkbox" name="saveYN" value="Y" <%=("").equals(userId)?"":"checked"%>>
 		</div>
 	</form>
 	<%} %>
-</div>
-</aside>
 </body>
 </html>
