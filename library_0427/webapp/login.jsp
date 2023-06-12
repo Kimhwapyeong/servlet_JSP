@@ -41,9 +41,9 @@ String userId = test.readCookie(request, "userId");
 				<input type="submit" value="로그인">
 			</div>
 		</div>
-		<div id='info'>
+		<div id='info' style="font-size:14px">
 			<a href="">회원가입</a> <a href="">ID찾기</a> <a href="">PW찾기</a>
-			<input type="checkbox" name="saveYN" value="Y" <%=("").equals(userId)?"":"checked"%>>
+			<input type="checkbox" name="saveYN" value="Y" <%=("").equals(userId)?"":"checked"%>>아이디저장
 		</div>
 	</form>
 	<%} %>

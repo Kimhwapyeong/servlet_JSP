@@ -20,7 +20,8 @@
 		CookieManager.makeCookie("userId", id, 60*60*24*7, response);
 	}
 	
-	
+
+
 	if("abc".equals(id) && "123".equals(pw)){
 		// 로그인 성공
 		
@@ -33,6 +34,6 @@
 		// 로그인 실패
 		response.sendRedirect("gogreen.jsp?loginErr=y");
 	}
-%>
+	%>
 </body>
 </html>
