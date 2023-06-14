@@ -18,12 +18,28 @@ public class BoardDao {
 	
 	/**
 	 * 게시글을 조회합니다.
+	 * 
+	 * 검색 조건 추가
 	 * @return List<Board>
 	 */
-	public List<Board> getList() {
+	/**
+	 * 게시글을 조회합니다
+	 * 
+	 * @param searchField : 검색 조건
+	 * @param searchWord : 검색어
+	 * @return List<Board> : 게시글 목록
+	 */
+	public List<Board> getList(String searchField, String searchWord) {
 		List<Board> list = new ArrayList<>();
 		
-		String sql = "select * from board order by num desc";
+		String sql = "select * "
+					+ "from board ";
+					
+		// 검색어가 입력 되었으면 검색 조건을 추가합니다.
+		if(searchWord != null && !searchWord.equals("")) {
+				sql	+= "where " + searchField + " like '%" + searchWord + "%'";
+		}
+		sql			+= "order by num desc";
 		
 		try(Connection conn = DBConnPool.getConnection();
 				PreparedStatement psmt = conn.prepareStatement(sql);) {
@@ -55,10 +71,15 @@ public class BoardDao {
 	 * 게시물의 갯수를 반환
 	 * @return 게시물의 총 갯수
 	 */
-	public int getTotalCnt() {
+	public int getTotalCnt(String searchField, String searchWord) {
 		int totalCnt = 0;
 		
-		String sql = "select count(*) from board order by num desc";
+		String sql = "select count(*) from board ";
+					
+		if(searchWord != null && !searchWord.equals("")) {
+			sql	 	+= "where " + searchField + " like '%" + searchWord + "%' ";
+		}
+			sql		+= "order by num desc";
 		
 		try(Connection conn = DBConnPool.getConnection();
 				PreparedStatement psmt = conn.prepareStatement(sql);) {
@@ -75,6 +96,102 @@ public class BoardDao {
 		}
 		
 		return totalCnt;
+	}
+	
+	/**
+	 * 게시글을 등록 합니다.
+	 * @param board
+	 * @return
+	 */
+	public int insert(Board board) {
+		int res = 0;
+		
+		String sql = "insert into board "
+				+ "(num, title, content, id, postdate, visitcount) values "
+				+ "(seq_board_num.nextval, ?, ?, ?, sysdate, 0)";
+		
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			psmt.setString(1, board.getTitle());
+			psmt.setString(2, board.getContent());
+			psmt.setString(3, board.getId());
+			
+			res = psmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return res;
+	}
+	
+	/**
+	 * 게시글 번호를 입력받아 게시글을 조회합니다.
+	 * @param num
+	 * @return
+	 */
+	public Board selectOne(String num) {
+		Board board = null;
+		
+		String sql = "select * from board where num = ?";
+		
+		if(num == null || "".equals(num)) {
+			return null;
+		}
+		
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			psmt.setString(1, num);
+			
+			ResultSet rs = psmt.executeQuery();
+			
+			// 1건의 게시글을 조회하여 board 객체를 담아준다.
+			if(rs.next()) {
+				board = new Board();
+				
+				board.setContent(rs.getString("content"));
+				board.setId(rs.getString("id"));
+				board.setNum(rs.getString("num"));
+				board.setPostDate(rs.getString("postdate"));
+				board.setTitle(rs.getString("title"));
+				board.setVisitCount(rs.getString("visitcount"));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return board;
+		
+	}
+	
+	/**
+	 * 게시물의 조회수를 1 증가 시킵니다.
+	 * @param num : 게시물 번호
+	 * @return 업데이트된 건수
+	 */
+	public int updateVisitCount(String num) {
+		int res = 0;
+		
+		String sql = "update board set visitcount = visitcount + 1 where num = ?";
+		
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			psmt.setString(1, num);
+			
+			res = psmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return res;
 	}
 	
 	/*

@@ -11,17 +11,19 @@
 </head>
 <body>
 <%
-	BoardDao boardDao = new BoardDao();
-	List<Board> list = boardDao.getList();
-	
-	int totalCnt = boardDao.getTotalCnt();
-	
 	String searchField = request.getParameter("searchField");
 	String searchWord = request.getParameter("searchWord");
 	
 	// 검색어가 null이 아니면 검색 기능을 추가
-	out.print((searchWord==null || searchWord.equals(""))?"":searchField);
-	out.print(searchWord==null?"":searchWord);
+	// out.print("검색어 : " + ((searchWord==null || searchWord.equals(""))?"":searchField) + "<br>");
+	// out.print("검색필드 : " + (searchWord==null?"":searchWord));
+
+	BoardDao boardDao = new BoardDao();
+	List<Board> list = boardDao.getList(searchField, searchWord);
+	
+	int totalCnt = boardDao.getTotalCnt(searchField, searchWord);
+	
+	
 %>
 
 <jsp:include page="Link.jsp"></jsp:include>
@@ -64,24 +66,31 @@
 	%>
 		<tr>
 			<td><%=board.getNum() %></td>
-			<td><a href="" style='text-decoration:none'><%=board.getTitle() %></a></td>
+			<td><a href="view.jsp?num=<%=board.getNum()%>" 
+							style='text-decoration:none'><%=board.getTitle() %></a></td>
 			<td><%=board.getId() %></td>
-			<td><%=board.getVisitCount() %></td>
 			<td><%=board.getPostDate() %></td>
+			<td><%=board.getVisitCount() %></td>
 		</tr>
 		<% 
 		} 
 	}
 	%>
 </table>
+<%
+String id = (String)session.getAttribute("UserId");
 
+if(id != null){ %>
 <table border='1' width="90%">
 	<tr>
 		<td align="right">
-			<input type="submit" value="글쓰기">
+				<input type="button" value="글쓰기" onclick="location.href='Write.jsp'">
 		</td>
 	</tr>
 </table>
+<%
+}
+%>
 
 </body>
 </html>

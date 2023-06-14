@@ -4,7 +4,7 @@ public class Board {
 
 	private String num;
 	private String title;
-	private String contect;
+	private String content;
 	private String id;
 	private String postDate;
 	private String visitCount;
@@ -13,11 +13,11 @@ public class Board {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Board(String num, String title, String contect
+	public Board(String num, String title, String content
 				, String id, String postDate, String visitCount) {
 		this.num = num;
 		this.title = title;
-		this.contect = contect;
+		this.content = content;
 		this.id = id;
 		this.postDate = postDate;
 		this.visitCount = visitCount;
@@ -42,12 +42,12 @@ public class Board {
 		this.title = title;
 	}
 
-	public String getContect() {
-		return contect;
+	public String getContent() {
+		return content;
 	}
 
-	public void setContect(String contect) {
-		this.contect = contect;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public String getId() {
