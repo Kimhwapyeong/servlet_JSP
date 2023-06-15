@@ -24,7 +24,7 @@
 	String num = board.getNum();
 	String boardId = board.getId();
 	String title = board.getTitle();
-	String content = board.getContent().replace("\r\n", "<br/>");
+	String content = board.getContent().replace("\r\n", "<br>");
 	String postdate = board.getPostDate();
 	String visitcount = board.getVisitCount();
 	
@@ -64,7 +64,7 @@
 	</tr>
 	<tr>
 		<td colspan='4' style='text-align:center'>
-		<input type="button" value="목록보기" onclick="history.go(-1)">
+		<input type="button" value="목록보기" onclick="location.href='Board.jsp'">
 		<%
 		if(session.getAttribute("UserId") != null 
 				&& session.getAttribute("UserId").equals(boardId)){
