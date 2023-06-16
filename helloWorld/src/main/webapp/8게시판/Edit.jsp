@@ -23,11 +23,15 @@
 	NewBoardDao dao = new NewBoardDao();
 	Board board = dao.seletOne(num);
 	
+   	String pageNo = request.getParameter("pageNo") == null ? "1"
+			: request.getParameter("pageNo");
 %>
 <%@include file="../6세션/Link.jsp" %>
 <h2>회원제 게시판 - 수정하기(Edit)</h2>
 <form action="EditProcess.jsp">
 	<input type="text" name="num" value="<%=board.getNum() %>" style="display:none">
+	<!--게시물 수정 후 게시물이 있던 페이지를 보기 위한 파라메터 --> 
+	<input type="text" name="pageNo" value="<%=pageNo %>" style="display:none">
     <table border="1" width="90%">
         <tr>
             <td>제목</td>

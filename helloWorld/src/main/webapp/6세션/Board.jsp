@@ -1,3 +1,4 @@
+<%@page import="dto.Criteria"%>
 <%@page import="dto.Board"%>
 <%@page import="java.util.List"%>
 <%@page import="dao.BoardDao"%>
@@ -11,17 +12,27 @@
 </head>
 <body>
 <%
+	// 검색 조건
 	String searchField = request.getParameter("searchField");
 	String searchWord = request.getParameter("searchWord");
+	String pageNo = request.getParameter("pageNo");
 	
 	// 검색어가 null이 아니면 검색 기능을 추가
 	// out.print("검색어 : " + ((searchWord==null || searchWord.equals(""))?"":searchField) + "<br>");
 	// out.print("검색필드 : " + (searchWord==null?"":searchWord));
 
+	// 검색 조건 객체로 생성
+	Criteria criteria = new Criteria(searchField, searchWord, pageNo);
+
+	// 게시판 DB 작업 - DAO 생성
 	BoardDao boardDao = new BoardDao();
-	List<Board> list = boardDao.getList(searchField, searchWord);
+
+	// 리스트 조회
+	//List<Board> list = boardDao.getList(searchField, searchWord);
+	List<Board> list = boardDao.getListPage(criteria);
 	
-	int totalCnt = boardDao.getTotalCnt(searchField, searchWord);
+	// 총 건수 조회
+	int totalCnt = boardDao.getTotalCnt(criteria);
 	
 	
 %>
@@ -30,7 +41,8 @@
 <h2>목록보기(List)</h2>
 총 건수 : <%=totalCnt %>
 
-<form>
+<form name='searchForm'>
+<input type='hidden' name='pageNo' value='<%=criteria.getPageNo()%>'>
 <table border='1' width="90%">
 	<tr>
 		<td align="center">
@@ -91,6 +103,18 @@ if(id != null){ %>
 <%
 }
 %>
+<!-- 페이지 블럭 생성 시작 -->
+<%
+	PageDto pageDto = new PageDto(totalCnt, criteria);
+%>
+<table border='1' width="90%">
+	<tr>
+		<td align="center">
+				<%@include file="PageNavi.jsp" %>
+		</td>
+	</tr>
+</table>
+<!-- 페이지 블럭 생성 끝 -->
 
 </body>
 </html>

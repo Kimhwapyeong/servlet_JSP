@@ -9,6 +9,7 @@ import java.util.List;
 
 import common.DBConnPool;
 import dto.Board;
+import dto.Criteria;
 
 public class BoardDao {
 
@@ -17,11 +18,61 @@ public class BoardDao {
 	}
 	
 	/**
-	 * 게시글을 조회합니다.
+	 * 게시글을 조회합니다
 	 * 
-	 * 검색 조건 추가
-	 * @return List<Board>
+	 * @param searchField : 검색 조건
+	 * @param searchWord : 검색어
+	 * @return List<Board> : 게시글 목록
 	 */
+	public List<Board> getListPage(Criteria criteria) {
+		List<Board> list = new ArrayList<>();
+		
+		String sql = ""
+					+ "select * "
+					+ "from ("
+					+ "select rownum rn, t.* "
+					+ "from ("
+					+ "select * from board ";
+					
+		// 검색어가 입력 되었으면 검색 조건을 추가합니다.
+		if(criteria.getSearchWord() != null && !criteria.getSearchWord().equals("")) {
+				sql	+= "where " + criteria.getSearchField() 
+					+ " like '%" + criteria.getSearchWord() + "%'";
+		}
+		sql			+= "order by num desc"
+					+  ") t )"
+					+  "where rn between "
+					+  criteria.getStartNo()
+					+  " and "
+					+  criteria.getEndNo();
+		
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			ResultSet rs = psmt.executeQuery();
+			// 게시글의 수만큼 반복
+			while(rs.next()) {
+				String num = rs.getString("num");
+				String title = rs.getString("title");
+				String content = rs.getString("content");
+				String id = rs.getString("id");
+				String postdate = rs.getString("postdate");
+				String visitcount = rs.getString("visitcount");
+				
+				// 게시물의 한 행을 DTO에 저장
+				Board board = new Board(num, title, content, id, postdate, visitcount);
+				list.add(board);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	
 	/**
 	 * 게시글을 조회합니다
 	 * 
@@ -71,13 +122,13 @@ public class BoardDao {
 	 * 게시물의 갯수를 반환
 	 * @return 게시물의 총 갯수
 	 */
-	public int getTotalCnt(String searchField, String searchWord) {
+	public int getTotalCnt(Criteria criteria) {
 		int totalCnt = 0;
 		
 		String sql = "select count(*) from board ";
 					
-		if(searchWord != null && !searchWord.equals("")) {
-			sql	 	+= "where " + searchField + " like '%" + searchWord + "%' ";
+		if(criteria.getSearchWord() != null && !criteria.getSearchWord().equals("")) {
+			sql	 	+= "where " + criteria.getSearchField() + " like '%" + criteria.getSearchWord() + "%' ";
 		}
 			sql		+= "order by num desc";
 		

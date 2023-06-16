@@ -53,15 +53,17 @@
         <tr>
             <td colspan="4" align="center">
             <%
+            String pageNo = request.getParameter("pageNo") == null ? "1"
+            				: request.getParameter("pageNo");
 	        if(session.getAttribute("UserId") != null 
 	        	&& session.getAttribute("UserId").equals(board.getId())){ %>
 	        	
-                <button type="button" onclick="location.href='Edit.jsp?num=<%=num %>'">수정하기</button>
-                <button type="button">삭제하기</button> 
+                <button type="button" onclick="location.href='Edit.jsp?num=<%=num %>&pageNo=<%=pageNo%>'">수정하기</button>
+                <button type="button" onclick="">삭제하기</button> 
 	        <%	
 	        }
             %>
-                <button type="button" onclick="location.href='List.jsp'">목록 보기</button>
+                <button type="button" onclick="location.href='List.jsp?pageNo=<%=pageNo%>'">목록 보기</button>
             </td>
         </tr>
     </table>

@@ -202,4 +202,35 @@ public class NewBoardDao {
 		
 		return res;
 	}
+	
+	/**
+	 * 게시물의 갯수를 반환
+	 * @return 게시물의 총 갯수
+	 */
+	public int getTotalCnt(Criteria criteria) {
+		int totalCnt = 0;
+		
+		String sql = "select count(*) from board ";
+					
+		if(criteria.getSearchWord() != null && !criteria.getSearchWord().equals("")) {
+			sql	 	+= "where " + criteria.getSearchField() + " like '%" + criteria.getSearchWord() + "%' ";
+		}
+			sql		+= "order by num desc";
+		
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			ResultSet rs = psmt.executeQuery();
+			if(rs.next()) {
+				// 첫 번째 컬럼의 값을 반환
+				totalCnt = rs.getInt(1);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			System.err.println("총 게시물의 수를 조회하던 중 예외가 발생하였습니다.");
+			e.printStackTrace();
+		}
+		
+		return totalCnt;
+	}
 }

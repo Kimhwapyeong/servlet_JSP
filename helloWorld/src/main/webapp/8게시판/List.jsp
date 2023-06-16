@@ -1,3 +1,4 @@
+<%@page import="dto.PageDto"%>
 <%@page import="dto.Criteria"%>
 <%@page import="dto.Board"%>
 <%@page import="java.util.List"%>
@@ -14,30 +15,35 @@
 	// 검색 조건
 	String searchField = request.getParameter("searchField");
 	String searchWord = request.getParameter("searchWord");
-	int pageNo = request.getParameter("pageNo") == null 
-				? 1 : Integer.parseInt(request.getParameter("pageNo"));
-
+	String pageNo = request.getParameter("pageNo");
+	
 	Criteria criteria = new Criteria(searchField, searchWord, pageNo);
-	
 	NewBoardDao dao = new NewBoardDao();
-	List<Board> boardList = dao.getList(criteria);
-	//List<Board> boardList = dao.getListPage(criteria);
 	
+	int total = dao.getTotalCnt(criteria); 
+	PageDto pageDto = new PageDto(total, criteria);
 	
+	//List<Board> boardList = dao.getList(criteria);
+	List<Board> boardList = dao.getListPage(criteria);
+	
+	//if(searchField != null && searchField){
+	//	String titleSelected = searchField.equals("title") ? "selected" : "";
+	//}
 %>
 <%@include file="../6세션/Link.jsp" %>
 <body>
     <h2>목록 보기(List)</h2>
     <!-- 검색폼 --> 
-    <form method="get">  
+    <form method="get" name="searchForm">  
+    <input type="hidden" name="pageNo" value=<%=criteria.getPageNo() %>>
     <table border="1" width="90%">
     <tr>
         <td align="center">
             <select name="searchField"> 
-                <option value="title">제목</option> 
-                <option value="content">내용</option>
+                <option value="title" <%="title".equals(searchField)?"selected":"" %>>제목</option> 
+                <option value="content" <%="content".equals(searchField)?"selected":"" %>>내용</option>
             </select>
-            <input type="text" name="searchWord" />
+            <input type="text" name="searchWord" value="<%=searchWord==null?"":searchWord%>"/>
             <input type="submit" value="검색하기" />
         </td>
     </tr>   
@@ -65,7 +71,7 @@
 	        <tr align="center">
 	            <td><%=board.getNum() %></td>  <!--게시물 번호-->
 	            <td align="left">  <!--제목(+ 하이퍼링크)-->
-	                <a href='View.jsp?num=<%=board.getNum() %>' style='text-decoration:none'><%=board.getTitle() %></a>
+	                <a href='View.jsp?num=<%=board.getNum() %>&pageNo=<%=criteria.getPageNo() %>' style='text-decoration:none'><%=board.getTitle() %></a>
 	            </td>
 	            <td align="center"><%=board.getId() %></td>          <!--작성자 아이디-->
 	            <td align="center"><%=board.getVisitCount() %></td>  <!--조회수-->
@@ -90,5 +96,12 @@
     <%
     }
     %>
+    <table border='1' width="90%">
+		<tr align="center">
+			<td><%@include file="../6세션/PageNavi.jsp" %></td>
+		</tr>    
+    </table>
+
+    
 </body>
 </html>

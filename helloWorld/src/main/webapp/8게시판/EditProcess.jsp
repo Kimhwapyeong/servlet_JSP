@@ -19,9 +19,13 @@
 	NewBoardDao dao = new NewBoardDao();
 	Board board = new Board(num, title, content, "", "", "");
 	int res = dao.updateBoard(board);
+   	
+	/// 게시물 수정 후 게시물이 있던 페이지를 보기 위한 파라메터 
+	String pageNo = request.getParameter("pageNo") == null ? "1"
+			: request.getParameter("pageNo");
 	
 	if(res > 0){
-		JSFunction.alertLocation("게시물이 수정되었습니다.", "List.jsp", out);
+		JSFunction.alertLocation("게시물이 수정되었습니다.", "View.jsp?num="+num+"&pageNo="+pageNo, out);
 	} else {
 		JSFunction.alertBack("게시물 수정 중 오류 발생", out);
 	}
