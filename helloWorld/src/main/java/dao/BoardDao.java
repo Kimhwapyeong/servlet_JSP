@@ -203,8 +203,8 @@ public class BoardDao {
 			// 1건의 게시글을 조회하여 board 객체를 담아준다.
 			if(rs.next()) {
 				board = new Board();
-				
-				board.setContent(rs.getString("content"));
+														// 줄바꿈 처리
+				board.setContent(rs.getString("content").replace("\r\n", "<br>"));
 				board.setId(rs.getString("id"));
 				board.setNum(rs.getString("num"));
 				board.setPostDate(rs.getString("postdate"));

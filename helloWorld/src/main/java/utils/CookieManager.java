@@ -18,7 +18,7 @@ public class CookieManager {
 		// 경로 설정
 		cookie.setPath("/");
 		// 유지 기간 설정
-		cookie.setMaxAge(3600);
+		cookie.setMaxAge(cTime);
 		// 응답 객체에 추가
 		response.addCookie(cookie);
 	}
