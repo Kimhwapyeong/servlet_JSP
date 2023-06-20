@@ -50,7 +50,7 @@
 	
 	<h4>1~100까지 정수 중 홀수의 합</h4>
 	<c:forEach begin="1" end="100" var="num">
-		<!-- <c:if test="${num mod 2 ne 0 }"/> -->
+		<%-- <c:if test="${num mod 2 ne 0 }"/> --%>
 		<c:if test="${num mod 2 eq 1 }">
 			<c:set var="sum" value="${sum+num }"></c:set>
 		</c:if>
@@ -125,7 +125,7 @@
 		var   : 변수명
 	-->
 	<c:forTokens items="<%=rgb %>" delims="," var="color">
-		<span style="color:${color}">${color }</span>
+		<span style="color:${color}">${color }</span><br>
 	</c:forTokens>
 </body>
 </html>
