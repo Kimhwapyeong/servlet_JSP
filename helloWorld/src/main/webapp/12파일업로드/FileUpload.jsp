@@ -7,12 +7,24 @@
 <title>Insert title here</title>
 <script>
 	function validateForm(form) {
-		alert(form.name.value);
-		alert(form.attachedFile.value);
-		if(form.attachedFile.value == ""){
-			return false;		
-		} else {
-			return true;
+		if(form.name.value == ''){
+			alert('작성자를 입력하세요.');
+			form.name.focus();
+			return false;
+		}
+		if(form.title.value == ''){
+			alert('제목을 입력하세요.');
+			form.title.focus();
+			return false;
+		}
+		if(form.attachedFile.value == ''){
+			alert('첨부파일은 필수 입니다.');
+			return false;
+		}
+		
+		if(document.querySelectorAll("[name=category]:checked").length == 0){
+			alert('카테고리를 선택해주세요.');
+			return false;
 		}
 	}
 </script>
@@ -32,6 +44,7 @@
 	<!-- 
 	유효성 검사, validation체크
 	사용자입력체크 로직 추가 -->
+	${errorMessage }
 	<form action="UploadProcess.jsp" method="post" 
 			enctype="multipart/form-data"
 			onsubmit="return validateForm(this);">
@@ -67,5 +80,18 @@
 				모든 문자를 인코딩 하지 않습니다.
 	 -->
 	
+	<h3>다운로드</h3>
+	<a href="${pageContext.request.contextPath }/upload/사용자생성및권한부여.sql"
+				download="파일명.spl">다운로드</a>
+	
 </body>
 </html>
+
+
+
+
+
+
+
+
+

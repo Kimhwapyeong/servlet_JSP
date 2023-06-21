@@ -41,7 +41,7 @@ public class FileDao {
 	// 파일 목록을 조회 합니다.
 	public List<FileDto> getFileList(){
 		List<FileDto> list = new ArrayList<FileDto>();
-		String sql = "select * from myfile order by idx dexc";
+		String sql = "select * from myfile order by idx desc";
 		
 		try(Connection conn = DBConnPool.getConnection();
 				PreparedStatement psmt = conn.prepareStatement(sql);) {
