@@ -12,10 +12,16 @@
 <title>Insert title here</title>
 </head>
 <body>
-<%
+<%--
 	FileDao dao = new FileDao();
 	List<FileDto> list = dao.getFileList();
-%>
+--%>
+<!-- 목록의 내용 -->
+<!-- EL에서 사용하기 위해 변수를 페이지 영역에 저장 -->
+<c:set var="list" value="${requestScope.list }"></c:set>
+<c:if test="${ empty list }">
+	<a href="${pageContext.request.contextPath }/12파일업로드/FileListServlet.do">게시물 가져오기</a>
+</c:if>
 	<h2>DB에 등록된 파일 목록 보기</h2>
 	<a href="FileUpload.jsp">파일 등록하기</a>
 	<!-- 게시물 목록 테이블(표) -->
@@ -31,9 +37,6 @@
 			<th>작성일</th>
 			<th></th>
 		</tr>
-		<!-- 목록의 내용 -->
-		<!-- EL에서 사용하기 위해 변수를 페이지 영역에 저장 -->
-		<c:set var="list" value="<%=list %>"></c:set>
 
 		<!-- 리스트가 비었는지 확인 -->
 		<c:if test="${ empty list }" var="result">
