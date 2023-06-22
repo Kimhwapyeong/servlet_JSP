@@ -43,7 +43,12 @@
 				</tr>
 			</c:forEach>
 		</c:if>
-	
 	</table>
+	<c:set var="pageDto" value="${requestScope.pageDto }"/>
+    <table border='1' width="90%">
+		<tr align="center">
+			<td><%@include file="PageNavi.jsp" %></td>
+		</tr>    
+    </table>
 </body>
 </html>

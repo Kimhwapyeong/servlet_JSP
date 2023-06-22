@@ -20,10 +20,14 @@ public class ListController extends HttpServlet{
 		Criteria criteria = new Criteria(searchField, searchWord, pageNo);
 		// 리스트 조회
 		MVCBoardDao dao = new MVCBoardDao();
-		// List<MVCBoardDto> list = dao.getBoardList();
+		List<MVCBoardDto> listSize = dao.getBoardList();
 		List<MVCBoardDto> list = dao.getBoardPage(criteria);
 		// request영역에 저장
 		req.setAttribute("list", list);
+		
+		PageDto pageDto = new PageDto(listSize.size(), criteria);
+		req.setAttribute("pageDto", pageDto);
+		
 		// 화면 페이지 전환
 		req.getRequestDispatcher("/14MVCBoard/List.jsp").forward(req, resp);
 	

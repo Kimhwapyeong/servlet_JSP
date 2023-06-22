@@ -19,7 +19,7 @@ public class PageDto {
 		this.criteria = criteria;
 		
 		endNo = (int)((Math.ceil(criteria.getPageNo()/10.0)) * 10);
-		startNo = endNo - (endNo - (10 - 1));
+		startNo = endNo - (10 - 1);
 		
 		realEnd = (int)(Math.ceil((total*1.0)/criteria.getAmount()));
 		
