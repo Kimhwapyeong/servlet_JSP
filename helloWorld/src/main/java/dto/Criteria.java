@@ -33,11 +33,15 @@ public class Criteria {
 			this.searchField = searchField;
 			this.searchWord = searchWord;
 		}
-		if(pageNoStr != null) {
-			pageNo = Integer.parseInt(pageNoStr);
-			if(pageNo > 0) {
-				endNo = pageNo * amount;
-				startNo = pageNo * amount - (amount - 1); 
+		if(pageNoStr != null && !pageNoStr.equals("")) {
+			try {
+				pageNo = Integer.parseInt(pageNoStr);
+				if(pageNo > 0) {
+					endNo = pageNo * amount;
+					startNo = pageNo * amount - (amount - 1); 
+				}
+			} catch (Exception e) {
+				System.err.println("페이지넘버 숫자로 변환 중 오류 발생");
 			}
 		}
 		

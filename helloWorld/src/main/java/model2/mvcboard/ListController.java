@@ -14,18 +14,30 @@ public class ListController extends HttpServlet{
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String searchField = req.getParameter("serchField");
-		String searchWord = req.getParameter("serchWord");
+		
+		// 파라메터 저장
+		String searchField = req.getParameter("searchField");
+		String searchWord = req.getParameter("searchWord");
 		String pageNo = req.getParameter("pageNo");
+		
+		// 검색어, 페이지정보 저장
 		Criteria criteria = new Criteria(searchField, searchWord, pageNo);
+		
 		// 리스트 조회
 		MVCBoardDao dao = new MVCBoardDao();
-		List<MVCBoardDto> listSize = dao.getBoardList();
+		//List<MVCBoardDto> listSize = dao.getBoardList();
 		List<MVCBoardDto> list = dao.getBoardPage(criteria);
+
+		// 총 게시물 수 저장
+		int totalCnt = dao.getTotalCnt(criteria);
+		
+		// 페이징처리 정보 저장
+		PageDto pageDto = new PageDto(totalCnt, criteria);
+
 		// request영역에 저장
 		req.setAttribute("list", list);
-		
-		PageDto pageDto = new PageDto(listSize.size(), criteria);
+		req.setAttribute("criteria", criteria);
+		req.setAttribute("totalCnt", totalCnt);
 		req.setAttribute("pageDto", pageDto);
 		
 		// 화면 페이지 전환

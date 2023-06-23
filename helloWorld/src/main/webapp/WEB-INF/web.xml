@@ -119,12 +119,12 @@
   	
   	<!-- 글쓰기 -->
   	<servlet>
-  		<servlet-name>Write</servlet-name>
+  		<servlet-name>WriteController</servlet-name>
   		<servlet-class>model2.mvcboard.WriteController</servlet-class>
   	</servlet>
   	
   	<servlet-mapping>
-  		<servlet-name>Write</servlet-name>
+  		<servlet-name>WriteController</servlet-name>
   		<url-pattern>/mvcboard/write.do</url-pattern>
   	</servlet-mapping>
   	
