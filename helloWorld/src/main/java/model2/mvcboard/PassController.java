@@ -42,6 +42,8 @@ public class PassController extends HttpServlet{
 			if(mode.equals("edit")) {
 				// 수정
 				resp.sendRedirect("../mvcboard/edit.do?idx="+idx);
+				/// toPost 메서드로 servlet에 forward하면 doPost 메서드가 실행됨.
+				//req.getRequestDispatcher("../mvcboard/edit.do?idx="+idx).forward(req, resp);
 			} else if (mode.equals("delete")) {
 				// 삭제
 				int res = dao.delete(idx);

@@ -16,8 +16,16 @@ public class WriteController extends HttpServlet{
 	
 	}
 	
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+	
+	}
+	
+	
 	public WriteController() {
-		// TODO Auto-generated constructor stub
+	
 	}
 
 }
