@@ -29,6 +29,10 @@ public class BookController extends HttpServlet{
 			
 			req.getRequestDispatcher("./list.jsp").forward(req, resp);
 		}
+		
+		if(uri.indexOf("view") > 0) {
+			
+		}
 	}
 	
 	@Override

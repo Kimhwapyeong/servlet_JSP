@@ -35,6 +35,7 @@ public class BookService {
 		map.put("list", list);
 		map.put("totalCnt", totalCnt);
 		map.put("pageDto", dto);
+		map.put("criteria", criteria);
 		
 		return map;
 	}
