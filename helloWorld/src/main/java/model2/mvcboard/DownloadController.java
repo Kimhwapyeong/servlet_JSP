@@ -8,23 +8,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/mvcboard/view.do")
-public class ViewController extends HttpServlet{
-	
+import common.FileUtil;
+
+@WebServlet("/mvcboard/download.do")
+public class DownloadController extends HttpServlet{
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		System.out.println(req.getParameter("ofile"));
+		System.out.println(req.getParameter("sfile"));
 		
-		// 게시물 조회
+		//System.out.println(req.getParameter("idx"));
 		MVCBoardDao dao = new MVCBoardDao();
-		MVCBoardDto dto = dao.selectOne(req.getParameter("idx"));
-		dao.updateVisitCount(req.getParameter("idx"));
-		// 조회된 게시물 저장(request영역)
-		req.setAttribute("dto", dto);
-		// View.jsp 페이지로 포워딩
-		req.getRequestDispatcher("/14MVCBoard/View.jsp").forward(req, resp);
+		int res = dao.updateDownCount(req.getParameter("idx"));
+		//System.out.println(res);
+		FileUtil.download(req, resp, "C:/upload", req.getParameter("ofile"), req.getParameter("sfile"));
+		
+		
 	}
 	
-	public ViewController() {
+	public DownloadController() {
 		// TODO Auto-generated constructor stub
 	}
 

@@ -134,11 +134,26 @@ public class MVCBoardDao {
 	public int insert(MVCBoardDto board) {
 		int res = 0;
 		String sql = "insert into mvcboard "
-					+ "(idx, name, title, content, ofile, pass) "
+					+ "(idx, name, title, content, ofile, sfile, pass) "
 					+ "values (seq_mvcboard_idx.nextval, "
-					+ "?, ?, ?, ?, ?)";
+					+ "?, ?, ?, ?, ?, ?)";
 		
-		// TODO
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			psmt.setString(1, board.getName());
+			psmt.setString(2, board.getTitle());
+			psmt.setString(3, board.getContent());
+			psmt.setString(4, board.getOfile());
+			psmt.setString(5, board.getSfile());
+			psmt.setString(6, board.getPass());
+			
+			res = psmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			System.out.println("게시물 입력 중 예외 발생");
+			e.printStackTrace();
+		}
 		
 		
 		return res;
@@ -209,6 +224,67 @@ public class MVCBoardDao {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return res;
+	}
+	
+	public int updateVisitCount(String idx) {
+		int res = 0;
+		String sql = "update mvcboard set visitcount = visitcount + 1 where idx = " + idx;
+		
+		try(Connection conn = DBConnPool.getConnection();
+				 PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			res = psmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return res;
+	}
+	
+	public int updateDownCount(String idx) {
+		int res = 0;
+		String sql = "update mvcboard set downcount = downcount + 1 where idx = " + idx;
+		
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			res = psmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return res;
+	}
+	
+	public int update(MVCBoardDto dto) {
+		int res = 0;
+		String sql = "update mvcboard set title = ?, name = ?"
+				+ ", content = ?, ofile = ?, sfile = ? where idx = " + dto.getIdx();
+		
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			psmt.setString(1, dto.getTitle());
+			psmt.setString(2, dto.getName());
+			psmt.setString(3, dto.getContent());
+			psmt.setString(4, dto.getOfile());
+			psmt.setString(5, dto.getSfile());
+			
+			res = psmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		return res;
 	}

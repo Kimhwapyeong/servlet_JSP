@@ -13,6 +13,7 @@
 </style>
 </head>
 <body>
+<%@ include file="/common/header.jsp" %>
 <%
 	// 세션에 저장된 멤버 객체로부터 이름을 출력
 	if(session.getAttribute("member") != null){

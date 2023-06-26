@@ -42,14 +42,13 @@
 			<th>제목</th>
 			<th>내용</th>
 			<th>작성일</th>
-			<th>원본파일명</th>
-			<th>저장된 파일명</th>
+			<th>첨부파일</th>
 			<th>다운로드 횟수</th>
 			<th>조회수</th>
 		</tr>
 		<c:if test="${ empty list }" var="result">
 			<tr>
-				<td colspan="9" style='text-align: center'>게시물이 없습니다.</td>
+				<td colspan="8" style='text-align: center'>게시물이 없습니다.</td>
 			</tr>
 		</c:if>
 		<c:if test="${ not result }">
@@ -60,8 +59,11 @@
 					<td><a href='../mvcboard/view.do?idx=${board.idx }'>${board.title }</a></td>
 					<td>${board.content }</td>
 					<td>${board.postdate }</td>
-					<td>${board.ofile }</td>
-					<td>${board.sfile }</td>
+					<td>
+						<c:if test="${not empty board.ofile}">
+							<a href="../mvcboard/download.do?ofile=${board.ofile }&sfile=${board.sfile }&idx=${board.idx } ">[Down]</a>						
+						</c:if>
+					</td>
 					<td>${board.downcount }</td>
 					<td>${board.visitcount }</td>
 				</tr>

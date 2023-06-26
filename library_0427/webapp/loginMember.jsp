@@ -8,6 +8,7 @@
 <title>Insert title here</title>
 </head>
 <body>
+<%@ include file="/common/header.jsp" %>
 <%
 	if(session.getAttribute("member") != null){
 		Member member = (Member)session.getAttribute("member");

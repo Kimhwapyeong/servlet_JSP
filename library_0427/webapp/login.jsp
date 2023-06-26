@@ -29,7 +29,7 @@ String userId = test.readCookie(request, "userId");
 <aside id='rightside'>
 <div class='loginbox'>
 	<!-- /// form : form 태그 안의 요소들을 가지고 서버에 페이지를 요청 -->
-	<form action="loginAction.jsp" method="post">
+	<form action="./login/LoginAction.do" method="post">
 		<div class='loginbox'>
 			<div id='login'>
 				<input type="text" name="userid" id="userid"

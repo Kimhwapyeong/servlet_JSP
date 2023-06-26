@@ -1,9 +1,13 @@
 package com.library.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.library.dao.BookDao;
 import com.library.vo.Book;
+import com.library.vo.Criteria;
+import com.library.vo.PageDto;
 
 public class BookService {
 	BookDao dao = new BookDao();
@@ -20,6 +24,21 @@ public class BookService {
 		return list;
 	}
 
+	public Map<String, Object> getBookMap(Criteria criteria){
+		Map<String, Object> map = new HashMap<>();
+		
+		//System.out.println("searchField : " + criteria.getSearchField() );
+		List<Book> list = dao.getListPage(criteria);
+		int totalCnt = dao.getTotalCnt(criteria);
+		PageDto dto = new PageDto(totalCnt, criteria);
+		
+		map.put("list", list);
+		map.put("totalCnt", totalCnt);
+		map.put("pageDto", dto);
+		
+		return map;
+	}
+	
 	/**
 	 * 도서 정보 입력
 	 */
