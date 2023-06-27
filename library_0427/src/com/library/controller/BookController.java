@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.Session;
 
 import com.library.service.BookService;
 import com.library.vo.Book;
@@ -56,7 +57,8 @@ public class BookController extends HttpServlet{
 			req.getRequestDispatcher("./list.book").forward(req, resp);
 		
 		} else if(uri.indexOf("rent") > 0) {
-			int res = bs.rentBook(req.getParameter("no"));
+			System.out.println(req.getParameter("id"));
+			int res = bs.rentBook(req.getParameter("no"), req.getParameter("id"));
 			System.out.println(req.getParameter("no"));
 			if(res>0) {
 				req.setAttribute("message", "대여 성공");

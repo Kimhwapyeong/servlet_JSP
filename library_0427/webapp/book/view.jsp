@@ -17,9 +17,9 @@
 		<th>렌트여부</th>
 		<td>${book.rentyn }</td>	
 	</tr>
-	<c:if test="${book.rentyn eq 'N' }">
+	<c:if test="${book.rentyn eq 'N' && userId != null}">
 		<tr>
-			<td colspan='6' style="text-align:right"><button onclick="location.href='../book/rent.book?no=${book.no}'">대여하기</button></td>
+			<td colspan='6' style="text-align:right"><button onclick="location.href='../book/rent.book?no=${book.no}&id=${userId }'">대여하기</button></td>
 		</tr>
 	</c:if>
 </table>

@@ -75,7 +75,7 @@ public class BookService {
 		return res;
 	}
 
-	public int rentBook(String bookNo) {
+	public int rentBook(String bookNo, String id) {
 		int res = 0;
 		// 대여가능한 도서인지 확인
 		String rentYN = dao.getRentYN(bookNo);
@@ -86,7 +86,7 @@ public class BookService {
 		}
 		
 		// 대여처리
-		res = dao.update(bookNo, "Y");
+		res = dao.rentBook(bookNo, id);
 		
 		if(res>0) {
 			System.out.println(res + "건 대여 되었습니다.");
@@ -107,7 +107,7 @@ public class BookService {
 		}
 		
 		// 반납처리
-		int res = dao.update(bookNo, "N");
+		int res = dao.returnBook(bookNo);
 		
 		if(res>0) {
 			System.out.println(res + "건 반납 되었습니다.");

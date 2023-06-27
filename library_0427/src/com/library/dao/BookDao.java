@@ -209,7 +209,7 @@ public class BookDao {
 		String rentYN = "";
 		String sql = 
 				String.format(
-					"SELECT RENTYN FROM BOOK WHERE NO = %s", bookNo);
+					"SELECT nvl((select 대여여부 from 대여 where 도서번호 = no and 대여여부='Y'),'N') rentyn FROM BOOK WHERE NO = %s", bookNo);
 		
 		
 		try (Connection conn = DBConnPool.getConnection();
@@ -233,7 +233,9 @@ public class BookDao {
 	public Book selectOne(String no) {
 		Book book = new Book();
 		
-		String sql = "select * from book where no = " + no;
+		String sql = "select no, title , nvl("
+				+ "(select 대여여부 from 대여 where 도서번호 = no and 대여여부='Y'),'N') rentyn "
+				+ ", author from book where no = " + no ;
 		
 		try(Connection conn = DBConnPool.getConnection();
 				PreparedStatement psmt = conn.prepareStatement(sql);) {
@@ -254,6 +256,33 @@ public class BookDao {
 		
 		
 		return book;
+	}
+	
+	public int rentBook(String no, String id) {
+		int res = 0;
+		String sql = "insert into 대여 (대여번호, 아이디, 도서번호, 반납가능일) "
+					+ "values (seq_대여.nextval, ?, ?, sysdate + 7)";
+		
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			psmt.setString(1, id);
+			psmt.setString(2, no);
+		
+			res = psmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return res;
+	}
+	
+	public int returnBook(String no) {
+		int res = 0;
+		
+		return res;
 	}
 }
 
