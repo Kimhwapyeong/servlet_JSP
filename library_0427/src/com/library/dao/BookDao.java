@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.library.common.ConnectionUtil;
 import com.library.common.DBConnPool;
 import com.library.vo.Book;
 import com.library.vo.Criteria;
@@ -33,7 +32,7 @@ public class BookDao {
 				+ "order by no";
 		
 		// try ( 리소스생성 ) => try문이 종료되면서 리소스를 자동으로 반납
-		try (Connection conn = ConnectionUtil.getConnection();
+		try (Connection conn = DBConnPool.getConnection();
 				Statement stmt = conn.createStatement();
 				// stmt.executeQuery : resultSet (질의한 쿼리에 대한 결과집합)
 				// stmt.executeUpdate : int (몇건이 처리되었는지!!!)
@@ -83,7 +82,7 @@ public class BookDao {
 		    		+ criteria.getEndNo();
 		
 		// try ( 리소스생성 ) => try문이 종료되면서 리소스를 자동으로 반납
-		try (Connection conn = ConnectionUtil.getConnection();
+		try (Connection conn = DBConnPool.getConnection();
 				Statement stmt = conn.createStatement();
 				// stmt.executeQuery : resultSet (질의한 쿼리에 대한 결과집합)
 				// stmt.executeUpdate : int (몇건이 처리되었는지!!!)
@@ -140,13 +139,13 @@ public class BookDao {
 		int res = 0;
 		
 		String sql = String.format
-	("insert into book values (SEQ_BOOK_NO.NEXTVAL, '%s', '%s', '%s')"
-				, book.getTitle(), book.getRentyn(), book.getAuthor());
+	("insert into book (no, title, author) values (SEQ_BOOK_NO.NEXTVAL, '%s', '%s')"
+				, book.getTitle(), book.getAuthor());
 
 		// 실행될 쿼리를 출력해봅니다
 		//System.out.println(sql);
 		
-		try (Connection conn = ConnectionUtil.getConnection();
+		try (Connection conn = DBConnPool.getConnection();
 				Statement stmt = conn.createStatement();	){
 			res = stmt.executeUpdate(sql);
 		} catch (SQLException e) {
@@ -160,19 +159,23 @@ public class BookDao {
 	 * 도서 삭제
 	 * @return
 	 */
-	public int delete(int no) {
+	public int delete(String noStr) {
 		int res = 0;
 		
-		String sql = String.format
-						("delete from book where no = %d", no);
+		String sql = "delete from book where no in (" + noStr + ")";
+		//String sql = "delete from book where no in ( ? )";
 	
 		// 실행될 쿼리를 출력해봅니다
 		//System.out.println(sql);
 		
-		try (Connection conn = ConnectionUtil.getConnection();
-				Statement stmt = conn.createStatement();	){
-			res = stmt.executeUpdate(sql);
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			//psmt.setString(1, noStr);
+			//System.out.println(sql);
+			res = psmt.executeUpdate();
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -183,16 +186,16 @@ public class BookDao {
 	 * 도서 업데이트
 	 * @return
 	 */
-	public int update(int no, String rentYN) {
+	public int update(String no, String rentYN) {
 		int res = 0;
 		
 		String sql = String.format
-		("update book set rentYN = '%s' where no = %d", rentYN ,no);
+		("update book set rentYN = '%s' where no = %s", rentYN ,no);
 	
 		// 실행될 쿼리를 출력해봅니다
 		//System.out.println(sql);
 		
-		try (Connection conn = ConnectionUtil.getConnection();
+		try (Connection conn = DBConnPool.getConnection();
 				Statement stmt = conn.createStatement();	){
 			res = stmt.executeUpdate(sql);
 		} catch (SQLException e) {
@@ -202,14 +205,14 @@ public class BookDao {
 		return res;
 	}
 
-	public String getRentYN(int bookNo) {
+	public String getRentYN(String bookNo) {
 		String rentYN = "";
 		String sql = 
 				String.format(
 					"SELECT RENTYN FROM BOOK WHERE NO = %s", bookNo);
 		
 		
-		try (Connection conn = ConnectionUtil.getConnection();
+		try (Connection conn = DBConnPool.getConnection();
 				Statement stmt= conn.createStatement();
 				ResultSet rs = stmt.executeQuery(sql);){
 			// 조회된 행이 있는지 확인
@@ -224,6 +227,33 @@ public class BookDao {
 		}
 		
 		return rentYN;
+	}
+
+
+	public Book selectOne(String no) {
+		Book book = new Book();
+		
+		String sql = "select * from book where no = " + no;
+		
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			ResultSet rs = psmt.executeQuery();
+			if(rs.next()) {
+				book.setNo(rs.getInt("no"));
+				book.setTitle(rs.getString("title"));
+				book.setAuthor(rs.getString("author"));
+				book.setRentyn(rs.getString("rentyn"));
+			}
+			rs.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return book;
 	}
 }
 

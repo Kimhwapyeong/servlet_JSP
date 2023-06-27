@@ -22,6 +22,10 @@ public class Book {
 		this.author = author;
 	}
 	
+	public Book() {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public String toString() {
 		String rentYNStr = "";

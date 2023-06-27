@@ -28,8 +28,14 @@ public class BookService {
 		Map<String, Object> map = new HashMap<>();
 		
 		//System.out.println("searchField : " + criteria.getSearchField() );
+		
+		// 리스트
 		List<Book> list = dao.getListPage(criteria);
+		
+		// 총 건수
 		int totalCnt = dao.getTotalCnt(criteria);
+		
+		// 페이지DTO
 		PageDto dto = new PageDto(totalCnt, criteria);
 		
 		map.put("list", list);
@@ -43,28 +49,34 @@ public class BookService {
 	/**
 	 * 도서 정보 입력
 	 */
-	public void insert(String title, String author) {
+	public int insert(String title, String author) {
+		int res = 0;
 		Book book = new Book(title, author);
-		int res = dao.insert(book);
+		res = dao.insert(book);
 		if(res > 0) {
 			System.out.println(res + "건 입력 되었습니다.");
 		} else {
 			System.err.println("입력중 오류가 발생 하였습니다.");
 			System.err.println("관리자에게 문의 해주세요");
 		}
+		
+		return res;
 	}
 
-	public void delete(int no) {
-		int res = dao.delete(no);
+	public int delete(String noStr) {
+		int res = dao.delete(noStr);
 		if(res>0) {
 			System.out.println(res+"건 삭제되었습니다.");
 		} else {
 			System.err.println("삭제중 오류가 발생 하였습니다.");
 			System.err.println("관리자에게 문의 해주세요");
 		}
+		
+		return res;
 	}
 
-	public void rentBook(int bookNo) {
+	public int rentBook(String bookNo) {
+		int res = 0;
 		// 대여가능한 도서인지 확인
 		String rentYN = dao.getRentYN(bookNo);
 		if("Y".equals(rentYN)) {
@@ -74,7 +86,7 @@ public class BookService {
 		}
 		
 		// 대여처리
-		int res = dao.update(bookNo, "Y");
+		res = dao.update(bookNo, "Y");
 		
 		if(res>0) {
 			System.out.println(res + "건 대여 되었습니다.");
@@ -82,9 +94,10 @@ public class BookService {
 			System.out.println("대여중 오류가 발생 하였습니다.");
 			System.out.println("관리자에게 문의 해주세요");
 		}
+		return res;
 	}
 
-	public void returnBook(int bookNo) {
+	public void returnBook(String bookNo) {
 		// 반납가능한 도서인지 확인
 		String rentYN = dao.getRentYN(bookNo);
 		if("N".equals(rentYN)) {
@@ -102,6 +115,14 @@ public class BookService {
 			System.out.println("반납 처리 중 오류가 발생 하였습니다.");
 			System.out.println("관리자에게 문의 해주세요");
 		}
+	}
+
+	public Book selectOne(String no) {
+		Book book = null;
+		book = dao.selectOne(no);
+		
+		
+		return book;
 	}
 	
 }

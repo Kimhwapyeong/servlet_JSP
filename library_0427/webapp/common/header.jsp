@@ -20,7 +20,6 @@
 			<a href="">사용자관리</a>
 		</div>
 		<div><button onclick="location.href='${pageContext.request.contextPath}/logout.jsp'">로그아웃</button></div>
-	
 	</c:if> 	
 	
 	<!-- 사용자 -->
@@ -31,11 +30,12 @@
 		</div>
 		<a href="">마이페이지</a>
 		
-		<!-- 로그인 전 사용자 -->
+		<!-- 로그인 전 -->
 		<c:if test="${empty sessionScope.userId }" var="res1">
 			<div><button onclick="location.href='${pageContext.request.contextPath}/login.jsp'">로그인</button></div>
 		</c:if>
 		
+		<!-- 로그인 후 -->
 		<c:if test="${not res1 }">
 			<div><button onclick="location.href='${pageContext.request.contextPath}/logout.jsp'">로그아웃</button></div>
 		</c:if>

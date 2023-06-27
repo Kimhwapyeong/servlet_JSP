@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.library.service.BookService;
+import com.library.vo.Book;
 import com.library.vo.Criteria;
 
 @WebServlet("*.book")
@@ -24,14 +25,43 @@ public class BookController extends HttpServlet{
 		if(uri.indexOf("list") > 0) {
 			//req.setAttribute("list", bs.getList());
 			//System.out.println("북컨트롤러호출");
+			
+			// 검색조건 세팅
 			Criteria criteria = new Criteria(req.getParameter("searchField"), req.getParameter("searchWord"), req.getParameter("pageNo"));
+			// 리스트 조회 및 요청객체에 저장
 			req.setAttribute("bookMap", bs.getBookMap(criteria));
 			
 			req.getRequestDispatcher("./list.jsp").forward(req, resp);
-		}
 		
-		if(uri.indexOf("view") > 0) {
+		} else if(uri.indexOf("view") > 0) {
+			Book book = bs.selectOne(req.getParameter("no"));
+			req.setAttribute("book", book);
 			
+			req.getRequestDispatcher("./view.jsp").forward(req, resp);
+		
+		} else if(uri.indexOf("delete") > 0) {
+			int res = bs.delete(req.getParameter("delNo"));
+			
+			// 포워딩
+			req.setAttribute("message", res + "건 삭제되었습니다.");
+			req.getRequestDispatcher("./list.book").forward(req, resp);
+		
+		} else if(uri.indexOf("insert") > 0) {
+			req.getRequestDispatcher("./insert.jsp").forward(req, resp);
+			
+		} else if(uri.indexOf("addbook") > 0) {
+			int res = bs.insert(req.getParameter("title"), req.getParameter("author"));
+			
+			req.setAttribute("message", res + "건 입력되었습니다.");
+			req.getRequestDispatcher("./list.book").forward(req, resp);
+		
+		} else if(uri.indexOf("rent") > 0) {
+			int res = bs.rentBook(req.getParameter("no"));
+			System.out.println(req.getParameter("no"));
+			if(res>0) {
+				req.setAttribute("message", "대여 성공");
+			}
+			req.getRequestDispatcher("./list.book").forward(req, resp);
 		}
 	}
 	

@@ -16,6 +16,10 @@ import com.utils.test;
 @WebServlet("/login/LoginAction.do")
 public class LoginController extends HttpServlet{
 	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+	}
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -47,8 +51,10 @@ public class LoginController extends HttpServlet{
 				// 관리자인 경우 adminYN = Y
 				session.setAttribute("adminYN", "Y");
 			}
-			//response.sendRedirect("../book/list.book");
-			request.getRequestDispatcher("../book/list.book").forward(request, response);
+			response.sendRedirect("../book/list.book");
+			/// 포워드 하였더니 로그인 후 나온 페이지 url이 login/LoginAction.do 여서 페이징 처리가 안됨.
+			/// script에서 searchName의 action값을 바꿔주면 되지만 response를 해도 됨 
+			//request.getRequestDispatcher("../book/list.book").forward(request, response);
 		}else{
 			response.sendRedirect("../login.jsp?loginErr=Y");
 		}

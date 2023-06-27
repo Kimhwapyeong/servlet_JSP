@@ -6,6 +6,38 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet" href="../css/list_style.css">
+<script>
+	
+	/// 메시지가 있다면 메시지 출력
+	/// script 에서도 el태그 사용 가능
+	let message = '${message}';
+	if(message != null && "" != message){
+		alert(message)
+	}
+				/// 삭제 후에도 같은 페이지에 있기 위해 파라메터로 pageNo를 넘겨줌
+				/// searchField와 searchWord는 검색 된 경우 파라메터로 넘어와서 selected
+				/// 되어 있기 때문에 자동으로 submit() 될 때 파라메터로 넘어감
+	function deleteBook(pageNo) {
+		// 체크박스가 선택된 요소의 value값을 ,로 연결
+		delNoList = document.querySelectorAll("[name=delNo]:checked");
+		
+		let delNo = "";
+		// 배열을 돌면서 저장된 변수 e의 value를 delNo 변수에 +
+		delNoList.forEach((e)=>{
+			delNo += e.value + ',';
+		})
+		// 마지막 , 삭제
+		delNo = delNo.substr(0, delNo.length-1);
+		console.log(delNo);
+		// 삭제 요청
+		searchForm.action="../book/delete.book";
+		searchForm.delNo.value=delNo;
+		searchForm.pageNo.value=pageNo;
+		searchForm.submit();
+		
+	}
+</script>
 </head>
 <body>
 <%@include file="../common/header.jsp" %>
@@ -13,30 +45,16 @@
 
 총건수 : ${requestScope.bookMap.totalCnt }
 
-<form name='searchForm' action="../book/list.book">
-<input type='hidden' name='pageNo' value='1'>
-<table border='1' width='90%'>
-	<tr>
-		<td align="center">
-			<select name='searchField'>
-				<option value='title' ${param.searchField eq 'title' ? "selected" : "" }>제목</option>
-				<option value='author' ${param.searchField eq 'author' ? "selected" : "" }>작가</option>
-			</select>
-			<input type="text" name="searchWord" value="${param.searchWord }">
-			<input type="submit" value="검색하기">
-		</td>
-	</tr>
-</table>
-</form>
+<jsp:include page="../common/searchForm.jsp"></jsp:include>
 
 <c:set var="list" value="${requestScope.bookMap.list }"></c:set>
-<table border="1" width="90%">
+<table border="1" width="100%">
 	<c:if test="${sessionScope.adminYN eq 'Y' }">
 	<tr>
 		<td colspan='5' class='right'>
 			<!-- 어드민 계정인 경우, 등록, 삭제 버튼을 출력 -->
-			<button>도서등록</button>
-			<button>도서삭제</button>
+			<button onclick="location.href='../book/insert.book'">도서등록</button>
+			<button onclick="deleteBook(${param.pageNo})">도서삭제</button>
 		</td>
 	</tr>
 	</c:if>
@@ -65,15 +83,15 @@
 				<td></td>				
 			</tr>
 		</c:forEach>
+		<c:set var="pageDto" value="${requestScope.bookMap.pageDto}"></c:set>
+		<table border='1' width='100%'>
+			<tr  class='center'>
+				<td><jsp:include page="../common/PageNavi.jsp"></jsp:include></td>
+			</tr>
+		</table>
 	</c:if>
 	
 </table> 
 
-<c:set var="pageDto" value="${requestScope.bookMap.pageDto}"></c:set>
-<table border='1' width='90%'>
-	<tr algin='center'>
-		<td><jsp:include page="../common/PageNavi.jsp"></jsp:include></td>
-	</tr>
-</table>
 </body>
 </html>
