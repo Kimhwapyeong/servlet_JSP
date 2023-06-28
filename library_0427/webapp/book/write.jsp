@@ -32,9 +32,9 @@
     }
 </script>
 </head>
+<jsp:include page="../common/header.jsp"></jsp:include>
 <form name="writeFrm" method="post" enctype="multipart/form-data"
       action="./write.book" onsubmit="return validateForm(this);">
-<jsp:include page="../common/header.jsp"></jsp:include>
 <h2>책 등록하기</h2>
 <table border="1" width="100%">
     <tr>
