@@ -82,7 +82,26 @@ public class BookController extends HttpServlet{
 			req.setAttribute("bookMap", bs.rentList(criteria, session.getAttribute("userId").toString()));
 			
 			req.getRequestDispatcher("./myPage.jsp").forward(req, resp);
-			
+		
+			/// 마이 페이지에서 반납했을 때 다시 마이페이지로 돌아가기 위해 doGet에도 return을 만들어줌
+		} else if(uri.indexOf("return") > 0) {
+			// 로그인 아이디 확인
+			HttpSession session = req.getSession();
+			if(session.getAttribute("userId") == null) {
+				JSFunction.alertBack(resp, "로그인 후 이용 가능한 메뉴입니다.");
+				return;
+			} else {
+				int res = bs.returnBook(req.getParameter("rentno"), req.getParameter("no"));
+				
+				if(res>0) {
+					JSFunction.alertLocation(resp, "반납되었습니다.", "./myPage.book?pageNo="
+								+ req.getParameter("pageNo") + "&searchField="
+								+ req.getParameter("searchField") + "&searchWord="
+								+ req.getParameter("searchWord"));
+				} else {
+					JSFunction.alertBack(resp, "반납중 오류 발생");
+				}
+			}
 		} else {
 			JSFunction.alertBack(resp, "url을 확인해주세요!");
 		}
@@ -95,7 +114,8 @@ public class BookController extends HttpServlet{
 		
 		if(uri.indexOf("write") > 0) {
 			// 도서등록
-			String saveDirectory = "D:\\workServlet\\git\\servlet_JSP\\library_0427\\webapp\\images\\bookimg";
+			// String saveDirectory = "D:\\workServlet\\git\\servlet_JSP\\library_0427\\webapp\\images\\bookimg";
+			String saveDirectory = "C:\\Users\\user\\자바\\servlet_JSP\\servlet_JSP\\library_0427\\webapp\\images\\bookimg";
 			MultipartRequest mr = FileUtil.uploadFile(req, saveDirectory, 1024*1000);
 			
 			String ofile = mr.getFilesystemName("bookImg");

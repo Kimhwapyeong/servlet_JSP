@@ -383,7 +383,7 @@ public class BookDao {
 					+ "from ("
 					+ "    select t.*, rownum rn "
 					+ "    from ("
-					+ "select 도서번호, title, 대여일, 반납일"
+					+ "select 도서번호, title, author, 대여일, 반납일, 대여번호"
 					+ ", 연체일 from book b, 대여 d "
 					+ "where b.no = d.도서번호 "
 					+ "and 아이디 = ? ";
@@ -409,6 +409,8 @@ public class BookDao {
 				book.setStartDate(rs.getString("대여일"));
 				book.setReturnDate(rs.getString("반납일"));
 				book.setOverDate(rs.getString("연체일"));
+				book.setRentno(rs.getString("대여번호"));
+				book.setAuthor(rs.getString("author"));
 				
 				listBook.add(book);
 			}
