@@ -129,7 +129,7 @@ public class LibraryController {
 				// 도서삭제
 				System.out.println("삭제한 도서 번호를 입력해주세요.");
 				int no = getInt();
-				bookService.delete(no);
+				//bookService.delete(no);
 				break;
 			case 3:
 				// 사용자 등록

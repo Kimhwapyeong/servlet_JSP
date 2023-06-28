@@ -6,11 +6,14 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet" href="../css/list_style.css">
 </head>
 <body>
 
 <header>
- 	userId : ${sessionScope.userId } / adminYN : ${sessionScope.adminYN eq 'Y'}
+ 	<c:if test="${sessionScope.userId != null }">
+ 		${sessionScope.userId } 님 환영합니다!
+ 	</c:if>
 	
 	<!-- 어드민 -->
 	<c:if test="${sessionScope.adminYN eq 'Y' }" var='res'>
@@ -26,9 +29,9 @@
 	<c:if test="${ not res }">
 		<div>로고</div>
 		<div>
-			<a href="">도서관리시스템</a>
+			<a href="../book/list.book">도서관리시스템</a>
 		</div>
-		<a href="">마이페이지</a>
+		<a href="./myPage.book">마이페이지</a>
 		
 		<!-- 로그인 전 -->
 		<c:if test="${empty sessionScope.userId }" var="res1">

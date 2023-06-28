@@ -49,10 +49,10 @@ public class BookService {
 	/**
 	 * 도서 정보 입력
 	 */
-	public int insert(String title, String author) {
+	public int insert(Book book) {
 		int res = 0;
-		Book book = new Book(title, author);
 		res = dao.insert(book);
+		/// JSFunction 에 메시지 출력이 있기 때문에 필요 없음
 		if(res > 0) {
 			System.out.println(res + "건 입력 되었습니다.");
 		} else {
@@ -75,18 +75,20 @@ public class BookService {
 		return res;
 	}
 
-	public int rentBook(String bookNo, String id) {
+	public int rentBook(Book book) {
 		int res = 0;
 		// 대여가능한 도서인지 확인
-		String rentYN = dao.getRentYN(bookNo);
+		String rentYN = dao.getRentYN(book.getNo());
 		if("Y".equals(rentYN)) {
 			System.err.println("이미 대여중인 도서 입니다.");
+			return res;
 		} else if ("".equals(rentYN)) {
 			System.out.println("없는 도서 번호 입니다.");
+			return res;
 		}
 		
 		// 대여처리
-		res = dao.rentBook(bookNo, id);
+		res = dao.rentBook(book);
 		
 		if(res>0) {
 			System.out.println(res + "건 대여 되었습니다.");
@@ -97,9 +99,10 @@ public class BookService {
 		return res;
 	}
 
-	public void returnBook(String bookNo) {
+	public int returnBook(String rentno, String bookno) {
+		int res = 0;
 		// 반납가능한 도서인지 확인
-		String rentYN = dao.getRentYN(bookNo);
+		String rentYN = dao.getRentYN(bookno);
 		if("N".equals(rentYN)) {
 			System.err.println("반납 가능한 상태가 아닙니다.");
 		} else if ("".equals(rentYN)) {
@@ -107,7 +110,7 @@ public class BookService {
 		}
 		
 		// 반납처리
-		int res = dao.returnBook(bookNo);
+		res = dao.returnBook(rentno);
 		
 		if(res>0) {
 			System.out.println(res + "건 반납 되었습니다.");
@@ -115,6 +118,7 @@ public class BookService {
 			System.out.println("반납 처리 중 오류가 발생 하였습니다.");
 			System.out.println("관리자에게 문의 해주세요");
 		}
+		return res;
 	}
 
 	public Book selectOne(String no) {
@@ -123,6 +127,22 @@ public class BookService {
 		
 		
 		return book;
+	}
+
+	public Map<String, Object> rentList(Criteria cri, String userId) {
+		Map<String, Object> bookMap = new HashMap<>();
+		List<Book> list = dao.rentList(cri, userId);
+		
+		int totalCnt = dao.getRentTotalCnt(cri, userId);
+		
+		PageDto pageDto = new PageDto(totalCnt, cri);
+		
+		bookMap.put("list", list);
+		bookMap.put("totalCnt", totalCnt);
+		bookMap.put("pageDto", pageDto);
+		bookMap.put("criteria", cri);
+		
+		return bookMap;
 	}
 	
 }

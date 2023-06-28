@@ -7,13 +7,16 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" href="../css/list_style.css">
+<style type="text/css">
+
+</style>
 <script>
 	
 	/// 메시지가 있다면 메시지 출력
 	/// script 에서도 el태그 사용 가능
 	let message = '${message}';
 	if(message != null && "" != message){
-		alert(message)
+		alert(message);
 	}
 				/// 삭제 후에도 같은 페이지에 있기 위해 파라메터로 pageNo를 넘겨줌
 				/// searchField와 searchWord는 검색 된 경우 파라메터로 넘어와서 selected
@@ -48,12 +51,12 @@
 <jsp:include page="../common/searchForm.jsp"></jsp:include>
 
 <c:set var="list" value="${requestScope.bookMap.list }"></c:set>
-<table border="1" width="100%">
+<table border="1" width="100%" class='listtb'>
 	<c:if test="${sessionScope.adminYN eq 'Y' }">
 	<tr>
 		<td colspan='5' class='right'>
 			<!-- 어드민 계정인 경우, 등록, 삭제 버튼을 출력 -->
-			<button onclick="location.href='../book/insert.book'">도서등록</button>
+			<button onclick="location.href='../book/write.book'">도서등록</button>
 			<button onclick="deleteBook(${param.pageNo})">도서삭제</button>
 		</td>
 	</tr>

@@ -38,7 +38,7 @@ public class BookDao {
 				// stmt.executeUpdate : int (몇건이 처리되었는지!!!)
 				ResultSet rs = stmt.executeQuery(sql)){
 			while(rs.next()) {
-				int no = rs.getInt(1);
+				String no = rs.getString(1);
 				String title = rs.getString(2);
 				String rentYN = rs.getString(3);
 				String author = rs.getString(4);
@@ -88,7 +88,7 @@ public class BookDao {
 				// stmt.executeUpdate : int (몇건이 처리되었는지!!!)
 				ResultSet rs = stmt.executeQuery(sql)){
 			while(rs.next()) {
-				int no = rs.getInt(1);
+				String no = rs.getString(1);
 				String title = rs.getString(2);
 				String rentYN = rs.getString(3);
 				String author = rs.getString(4);
@@ -138,17 +138,24 @@ public class BookDao {
 	public int insert(Book book) {
 		int res = 0;
 		
-		String sql = String.format
-	("insert into book (no, title, author) values (SEQ_BOOK_NO.NEXTVAL, '%s', '%s')"
-				, book.getTitle(), book.getAuthor());
+		String sql = "insert into book (no, title, author, ofile, sfile) "
+				+ "values (SEQ_BOOK_NO.NEXTVAL, ?, ?, ?, ?)";
 
 		// 실행될 쿼리를 출력해봅니다
 		//System.out.println(sql);
 		
 		try (Connection conn = DBConnPool.getConnection();
-				Statement stmt = conn.createStatement();	){
-			res = stmt.executeUpdate(sql);
+				PreparedStatement psmt = conn.prepareStatement(sql);	){
+			
+			psmt.setString(1, book.getTitle());
+			psmt.setString(2, book.getAuthor());
+			psmt.setString(3, book.getOfile());
+			psmt.setString(4, book.getSfile());
+			
+			res = psmt.executeUpdate();
+			
 		} catch (SQLException e) {
+			System.err.println(e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -233,19 +240,28 @@ public class BookDao {
 	public Book selectOne(String no) {
 		Book book = new Book();
 		
-		String sql = "select no, title , nvl("
+		String sql = "select b.no, b.title , nvl("
 				+ "(select 대여여부 from 대여 where 도서번호 = no and 대여여부='Y'),'N') rentyn "
-				+ ", author from book where no = " + no ;
+				+ ", b.author, d.아이디, ofile, sfile, b.rentno "
+				+ ", to_char(대여일,'yy/mm/dd') 대여일, to_char(반납가능일,'yy/mm/dd') 반납가능일 from book b, 대여 d "
+				+ "where b.rentno = d.대여번호(+) and "
+				+ "b.no = " + no ;
 		
 		try(Connection conn = DBConnPool.getConnection();
 				PreparedStatement psmt = conn.prepareStatement(sql);) {
 			
 			ResultSet rs = psmt.executeQuery();
 			if(rs.next()) {
-				book.setNo(rs.getInt("no"));
+				book.setNo(rs.getString("no"));
 				book.setTitle(rs.getString("title"));
 				book.setAuthor(rs.getString("author"));
 				book.setRentyn(rs.getString("rentyn"));
+				book.setOfile(rs.getString("ofile"));
+				book.setSfile(rs.getString("sfile"));
+				book.setRentno(rs.getString("rentno"));
+				book.setId(rs.getString("아이디"));
+				book.setStartDate(rs.getString("대여일"));
+				book.setEndDate(rs.getString("반납가능일"));
 			}
 			rs.close();
 			
@@ -258,30 +274,182 @@ public class BookDao {
 		return book;
 	}
 	
-	public int rentBook(String no, String id) {
+	public int rentBook(Book book) {
 		int res = 0;
-		String sql = "insert into 대여 (대여번호, 아이디, 도서번호, 반납가능일) "
-					+ "values (seq_대여.nextval, ?, ?, sysdate + 7)";
+		String sql1 = "select 'R'||lpad(seq_대여.nextval,5,0) from dual";
+		String sql2 = "update book set rentno = ? where no = ? and (rentno is null or rentno='')";
+		String sql3 = "insert into 대여 values (?, ?, ?, 'Y', sysdate, null, sysdate+14, null)";
+		
+		// 1. 대여번호 조회
+		try(Connection conn = DBConnPool.getConnection();) {
+			conn.setAutoCommit(false);
+			
+			PreparedStatement psmt = conn.prepareStatement(sql1);
+			ResultSet rs = psmt.executeQuery();
+			if(!rs.next()) {
+				return res;
+			}
+			
+			String rentno = rs.getString(1);
+			System.out.println("rentno : " + rentno);
+			psmt.close();
+			
+			psmt = conn.prepareStatement(sql2);
+			psmt.setString(1, rentno);
+			psmt.setString(2, book.getNo());
+			
+			res = psmt.executeUpdate();
+			System.out.println("sql2 : " + sql2);
+			System.out.println("res : " + res);
+			if(res>0){
+				psmt.close();
+				psmt = conn.prepareStatement(sql3);
+				
+				psmt.setString(1, rentno);
+				psmt.setString(2, book.getId());
+				psmt.setString(3, book.getNo());
+				
+				res = psmt.executeUpdate();
+				System.out.println("sql3 : " + sql3);
+				System.out.println("res : " + res);
+				if(res>0) {
+					conn.commit();
+				} else {
+					conn.rollback();
+				}
+			} else {
+				conn.rollback();
+			}
+			psmt.close();
+			rs.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// 2. Book테이블 업데이트(rentyn=Y, rentno=대여번호)
+		//		조건 : 도서번호, rentno가 null 또는 ""
+		// 3. 대여 테이블 인서트()
+
+		return res;
+	}
+	
+	public int returnBook(String rentno) {
+		int res = 0;
+		System.out.println(rentno);
+		// book 테이블 rentno 삭제
+		String sql1 = "update book set rentno = null where rentno = '" + rentno + "'";
+		String sql2 = "update 대여 set 대여여부 = 'N', 반납일 = sysdate"
+				+ ", 연체일 = CASE WHEN (SYSDATE - 반납가능일) > 0 THEN trunc(SYSDATE - 반납가능일) "
+				+ "WHEN (SYSDATE - 반납가능일) <= 0 THEN 0 END where 대여번호 = '" + rentno + "'";
+		// 대여 테이블 대여여부 N, 반납일, 연체일 업데이트
+		
+		try(Connection conn = DBConnPool.getConnection();) {
+			conn.setAutoCommit(false);
+			
+			PreparedStatement psmt = conn.prepareStatement(sql1);
+			System.out.println(sql1);
+			res = psmt.executeUpdate();
+			
+			if(res>0) {
+				psmt.close();
+				psmt = conn.prepareStatement(sql2);
+				
+				res = psmt.executeUpdate();
+				
+				if(res>0) {
+					conn.commit();
+				} else {
+					conn.rollback();
+				}
+			} else {
+				conn.rollback();
+			}
+			
+			psmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return res;
+	}
+
+
+	public List<Book> rentList(Criteria cri, String userId) {
+		List<Book> listBook = new ArrayList<>();
+		String sql = "select * "
+					+ "from ("
+					+ "    select t.*, rownum rn "
+					+ "    from ("
+					+ "select 도서번호, title, 대여일, 반납일"
+					+ ", 연체일 from book b, 대여 d "
+					+ "where b.no = d.도서번호 "
+					+ "and 아이디 = ? ";
+		if(cri.getSearchWord() != null && !"".equals(cri.getSearchWord())) {
+			sql += "and " + cri.getSearchField() + " like '%" + cri.getSearchWord() + "%' "; 
+		}
+			sql += "order by 대여일 desc) t)"
+					+ "where rn between "
+					+ cri.getStartNo()
+					+ " and "
+					+ cri.getEndNo();
+					
 		
 		try(Connection conn = DBConnPool.getConnection();
 				PreparedStatement psmt = conn.prepareStatement(sql);) {
 			
-			psmt.setString(1, id);
-			psmt.setString(2, no);
-		
-			res = psmt.executeUpdate();
+			psmt.setString(1, userId);
+			ResultSet rs = psmt.executeQuery();
+			while(rs.next()) {
+				Book book = new Book();
+				book.setNo(rs.getString("도서번호"));
+				book.setTitle(rs.getString("title"));
+				book.setStartDate(rs.getString("대여일"));
+				book.setReturnDate(rs.getString("반납일"));
+				book.setOverDate(rs.getString("연체일"));
+				
+				listBook.add(book);
+			}
+			
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return res;
+		
+		return listBook;
 	}
 	
-	public int returnBook(String no) {
+	public int getRentTotalCnt(Criteria cri, String userId) {
 		int res = 0;
+		String sql = ""
+				+ "select count(*) from book b, 대여 d "
+				+ "where b.no = d.도서번호 "
+				+ "and 아이디 = ? ";
+		if(cri.getSearchWord() != null && !"".equals(cri.getSearchWord())) {
+			sql += "and " + cri.getSearchField() + " like '%" + cri.getSearchWord() + "%' "; 
+		}
+			sql += "order by 대여일 desc";
 		
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			psmt.setString(1, userId);
+			ResultSet rs = psmt.executeQuery();
+			
+			if(rs.next()) {
+				res = rs.getInt(1);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+			
 		return res;
 	}
 }

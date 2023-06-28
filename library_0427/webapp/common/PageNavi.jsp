@@ -29,7 +29,8 @@
 				onclick="go(${bookMap.pageDto.startNo-1}, '${searchF}', '${searchW}')"> 
 </c:if>
 <c:forEach begin="${bookMap.pageDto.startNo }" end="${bookMap.pageDto.endNo }" var="i">
-	<a href="list.book?pageNo=${i}&searchField=${searchF}&searchWord=${searchW}">${i}</a>
+	<!-- <a href="list.book?pageNo=${i}&searchField=${searchF}&searchWord=${searchW}">${i}</a> -->
+	<a href="" onclick="go(${i}, '${searchF}', '${searchW}')">${i}</a>
 </c:forEach>
 <c:if test="${bookMap.pageDto.next }">
 	<input type='button' value='다음' 
