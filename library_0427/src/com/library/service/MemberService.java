@@ -1,7 +1,13 @@
 package com.library.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.library.dao.MemberDao;
+import com.library.vo.Criteria;
 import com.library.vo.Member;
+import com.library.vo.PageDto;
 
 public class MemberService {
 	MemberDao dao = new MemberDao();
@@ -46,7 +52,7 @@ public class MemberService {
 		
 	}
 
-	public void delete(String delId) {
+	public int delete(String delId) {
 		int res= dao.delete(delId);
 		
 		if(res>0) {
@@ -55,6 +61,8 @@ public class MemberService {
 			System.out.println("삭제중 오류가 발생 하였습니다.");
 			System.out.println("관리자에게 문의해주세요.");
 		}
+		
+		return res;
 	}
 
 	public boolean idCheck(String id) {
@@ -65,7 +73,20 @@ public class MemberService {
 		return res;
 	}
 	
-	
+	public Map<String, Object> getList(Criteria cri){
+		Map<String, Object> map = new HashMap<>();
+		
+		List<Member> list = dao.getListPage(cri);
+		int totalCnt = dao.getTotalCnt(cri);
+		PageDto pageDto = new PageDto(totalCnt, cri);
+		
+		map.put("list", list);
+		map.put("totalCnt", totalCnt);
+		map.put("pageDto", pageDto);
+		map.put("criteria", cri);
+		
+		return map;
+	}
 	
 }
 

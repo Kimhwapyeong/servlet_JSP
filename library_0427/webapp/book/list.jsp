@@ -44,13 +44,15 @@
 </head>
 <body>
 <%@include file="../common/header.jsp" %>
+<!-- //책 삭제 후 뒤로가기 했을 때 메시지가 alert 되는 것을 없애기 위해 넣음 -->
+<c:set value="" var="message"/>
 <h2>도서목록</h2>
 
-총건수 : ${requestScope.bookMap.totalCnt }
+총건수 : ${requestScope.map.totalCnt }
 
 <jsp:include page="../common/searchForm.jsp"></jsp:include>
 
-<c:set var="list" value="${requestScope.bookMap.list }"></c:set>
+<c:set var="list" value="${requestScope.map.list }"></c:set>
 <table border="1" width="100%" class='listtb'>
 	<c:if test="${sessionScope.adminYN eq 'Y' }">
 	<tr>
@@ -86,7 +88,7 @@
 				<td></td>				
 			</tr>
 		</c:forEach>
-		<c:set var="pageDto" value="${requestScope.bookMap.pageDto}"></c:set>
+		<c:set var="pageDto" value="${requestScope.map.pageDto}"></c:set>
 		<table border='1' width='100%'>
 			<tr  class='center'>
 				<td><jsp:include page="../common/PageNavi.jsp"></jsp:include></td>

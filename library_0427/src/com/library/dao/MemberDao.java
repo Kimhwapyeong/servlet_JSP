@@ -1,11 +1,16 @@
 package com.library.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.library.common.ConnectionUtil;
+import com.library.common.DBConnPool;
+import com.library.vo.Criteria;
 import com.library.vo.Member;
 
 public class MemberDao {
@@ -94,19 +99,89 @@ public class MemberDao {
 		return res;
 	}
 	
-	public int delete(String id) {
+	public int delete(String delId) {
 		int res = 0;
 		
-		String sql = String.format
-				("delete from member where id = '%s'",id);
+		String sql = "delete from member where id in (" + delId + ")";
 		
 		System.out.println(sql);
 		
 		try (Connection conn = ConnectionUtil.getConnection();
-				Statement stmt = conn.createStatement();){
+				PreparedStatement psmt = conn.prepareStatement(sql);){
 			
-			res = stmt.executeUpdate(sql);
+			res = psmt.executeUpdate(sql);
 		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return res;
+	}
+	
+	public List<Member> getListPage(Criteria cri){
+		List<Member> list = new ArrayList<>();
+
+		String sql = "select * "
+				+ "from ("
+				+ "select t.*, rownum rn "
+				+ "from (select id, name, adminyn, status, grade from member ";
+		
+		if(cri.getSearchWord() != null && !"".equals(cri.getSearchWord())) {
+			sql += "where " + cri.getSearchField() 
+				+ " like '%" + cri.getSearchWord() + "%' ";
+		}
+			sql += ") t) "
+					+ "where rn between "
+					+ cri.getStartNo()
+					+ " and "
+					+ cri.getEndNo();
+			
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			ResultSet rs = psmt.executeQuery();
+			while(rs.next()) {
+				Member member = new Member();
+				member.setId(rs.getString("id"));
+				member.setName(rs.getString("name"));
+				member.setAdminyn(rs.getString("adminyn"));
+				member.setStatus(rs.getString("status"));
+				member.setGrade(rs.getString("grade"));
+				
+				list.add(member);
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return list;
+		
+	}
+	
+	public int getTotalCnt(Criteria cri) {
+		int res = 0;
+		
+		String sql = "select count(*) "
+				+ "from member ";
+		
+		if(cri.getSearchWord() != null && !"".equals(cri.getSearchWord())) {
+			sql += "where " + cri.getSearchField() 
+				+ " like '%" + cri.getSearchWord() + "%' ";
+		}
+
+		try(Connection conn = DBConnPool.getConnection();
+				PreparedStatement psmt = conn.prepareStatement(sql);) {
+			
+			ResultSet rs = psmt.executeQuery();
+			if(rs.next()) {
+				res = rs.getInt(1);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

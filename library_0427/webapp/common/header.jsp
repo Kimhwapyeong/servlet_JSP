@@ -19,9 +19,9 @@
 	<c:if test="${sessionScope.adminYN eq 'Y' }" var='res'>
 		<div>로고</div>
 		<div>
-			<a href="">도서관리</a>
+			<a href="../book/list.book">도서관리</a>
 		</div>
-			<a href="">사용자관리</a>
+			<a href="../member/list.member">사용자관리</a>
 		<div><button onclick="location.href='${pageContext.request.contextPath}/logout.jsp'">로그아웃</button></div>
 	</c:if> 	
 	

@@ -19,6 +19,10 @@ public class Member {
 		this.grade = grade;
 	}
 	
+	public Member() {
+		
+	};
+	
 	@Override
 	public String toString() {
 		return getId()

@@ -37,7 +37,7 @@ public class BookController extends HttpServlet{
 			// 검색조건 세팅
 			Criteria criteria = new Criteria(req.getParameter("searchField"), req.getParameter("searchWord"), req.getParameter("pageNo"));
 			// 리스트 조회 및 요청객체에 저장
-			req.setAttribute("bookMap", bs.getBookMap(criteria));
+			req.setAttribute("map", bs.getBookMap(criteria));
 			
 			req.getRequestDispatcher("./list.jsp").forward(req, resp);
 		
