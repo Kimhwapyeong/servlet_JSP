@@ -17,8 +17,8 @@ ${map.message  }
 <jsp:include page="/common/header.jsp"/>
 <h2>파일 첨부형 게시판 - 상세 보기(View)</h2>
 <form name="viewForm" method="Post">
-대여번호 : <input type="text" name="rentno" value="${book.rentno }">
-도서번호 : <input type="text" name="no" value="${book.no }">
+<!-- 대여번호 : <input type="text" name="rentno" value="${book.rentno }">
+도서번호 : <input type="text" name="no" value="${book.no }">  -->
 <!-- <input type='hidden' name='id' value=${sessionScope.userId }> -->
 <table border="1" width='100%'>
     <colgroup>
@@ -30,7 +30,7 @@ ${map.message  }
     <!-- 게시글 정보 -->
     <tr>
         <td rowspan="3">
-        	<img alt="${ book.title }이미지" width="200px" src="../images/bookimg/${book.sfile }">
+        	<img alt="${ book.title }이미지" width="200px" height="300px" src="../images/bookimg/${book.sfile }">
         </td>
         <td>도서명</td><td>${ book.title }</td>
         <td>작가</td> <td>${ book.author }</td>

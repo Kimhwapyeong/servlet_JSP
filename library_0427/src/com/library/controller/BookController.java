@@ -117,7 +117,7 @@ public class BookController extends HttpServlet{
 			// String saveDirectory = "D:\\workServlet\\git\\servlet_JSP\\library_0427\\webapp\\images\\bookimg";  // 학원
 			// String saveDirectory = "C:\\Users\\user\\자바\\servlet_JSP\\servlet_JSP\\library_0427\\webapp\\images\\bookimg"; // 그램
 			String saveDirectory = "C:\\Users\\User\\study\\servlet_JSP\\servlet_JSP\\library_0427\\webapp\\images\\bookimg"; // 갤북
-			MultipartRequest mr = FileUtil.uploadFile(req, saveDirectory, 1024*1000);
+			MultipartRequest mr = FileUtil.uploadFile(req, saveDirectory, 1024*10000);
 			
 			String ofile = mr.getFilesystemName("bookImg");
 			

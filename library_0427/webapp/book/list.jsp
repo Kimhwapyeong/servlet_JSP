@@ -80,7 +80,9 @@
 			<tr>
 				<td class='center'>
 					<!-- 삭제용 체크박스 -->
+					<c:if test="${sessionScope.adminYN eq 'Y' }">
 					<input type='checkbox' name='delNo' value='${book.no }'>
+					</c:if>
 				</td>
 				<td><a href='../book/view.book?no=${book.no }'>${book.title }</a></td>				
 				<td>${book.author }</td>				

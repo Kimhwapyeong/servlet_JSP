@@ -12,7 +12,7 @@
 
 <header>
  	<c:if test="${sessionScope.userId != null }">
- 		${sessionScope.userId } 님 환영합니다!
+ 		${member.name } 님 환영합니다!
  	</c:if>
 	
 	<!-- 어드민 -->
