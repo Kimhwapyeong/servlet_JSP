@@ -52,7 +52,6 @@
 </table>
 </form>
 총 건수 : ${map.totalCnt }
-<button onclick="deleteMember(${map.criteria.pageNo})">회원삭제</button>
 <table border='1' width="100%">
 	<tr>
 		<td colspan="5" class='right'>
